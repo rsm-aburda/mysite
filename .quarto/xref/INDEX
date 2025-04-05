@@ -7,5 +7,26 @@
   },
   "resume.qmd": {
     "resume.html": "f58f3644"
+  },
+  "projects.qmd": {
+    "projects.html": "362800ad"
+  },
+  "blog.qmd": {
+    "blog.html": "2bdf8ed0"
+  },
+  "blog/hw2/index.qmd": {
+    "index.html": "f9d0c3c4"
+  },
+  "blog/hw1/index.qmd": {
+    "index.html": "e1c48d6c"
+  },
+  "blog/hw4/index.qmd": {
+    "index.html": "5b162f4e"
+  },
+  "blog/hw3/index.qmd": {
+    "index.html": "0e5fddd2"
+  },
+  "blog/hw5/index.qmd": {
+    "index.html": "5f48ac8b"
   }
 }

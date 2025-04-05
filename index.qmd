@@ -1,7 +1,7 @@
 ---
 title: "Andrew Burda"
 image: images/DSC03702.jpg
-theme: cosmo
+
 about: 
     template: solana
     links:

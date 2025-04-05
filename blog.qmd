@@ -1,0 +1,10 @@
+---
+title: "My Blog"
+
+listing:
+  contents: blog
+  type: grid
+  sort: "dated desc"
+  categories: false
+
+---
