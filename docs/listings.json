@@ -5,5 +5,11 @@
       "/blog/hw2/index.html",
       "/blog/hw1/index.html"
     ]
+  },
+  {
+    "listing": "/projects.html",
+    "items": [
+      "/projects/Upcycled Supply Co/index.html"
+    ]
   }
 ]
