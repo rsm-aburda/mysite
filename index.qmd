@@ -1,0 +1,21 @@
+---
+title: "Andrew Burda"
+image: images/DSC03702.jpg
+theme: cosmo
+about: 
+    template: solana
+    links:
+        - icon: envelope
+          text: Email
+          href: mailto:aburda531@gmail.com
+        - icon: linkedin
+          text: Linkedin
+          href: https://www.linkedin.com/in/andrew-burda/
+        - icon: github
+          text: Github
+          href: https://github.com/rsm-aburda
+---
+
+This is a Quarto website.
+
+To learn more about Quarto websites visit <https://quarto.org/docs/websites>.
