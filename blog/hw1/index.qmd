@@ -10,7 +10,20 @@ callout-appearance: minimal # this hides the blue "i" icon on .callout-notes
 
 Dean Karlan at Yale and John List at the University of Chicago conducted a field experiment to test the effectiveness of different fundraising letters. They sent out 50,000 fundraising letters to potential donors, randomly assigning each letter to one of three treatments: a standard letter, a matching grant letter, or a challenge grant letter. They published the results of this experiment in the _American Economic Review_ in 2007. The article and supporting data are available from the [AEA website](https://www.aeaweb.org/articles?id=10.1257/aer.97.5.1774) and from Innovations for Poverty Action as part of [Harvard's Dataverse](https://dataverse.harvard.edu/dataset.xhtml?persistentId=doi:10.7910/DVN/27853&version=4.2).
 
-_to do: expand on the description of the experiment._
+The original experiment was conducted in partnership with a nonprofit that supported economically disadvantaged children. The researchers sent out 50,000 fundraising letters to potential donors, randomly assigning each recipient to one of three treatment groups:
+
+- **Standard Letter (Control):** A basic appeal describing the mission of the organization and requesting support.
+- **Matching Grant Treatment:** A letter stating that donations would be matched dollar-for-dollar by a lead donor, up to a specific amount.
+- **Challenge Grant Treatment:** A letter explaining that a lead donor had pledged a large donation, but only if a threshold level of additional contributions was met.
+
+The treatments were randomized to ensure internal validity, and the primary outcomes measured were:
+- A binary indicator of whether a donation was made
+- The dollar amount donated
+
+By comparing outcomes across the three groups, Karlan and List aimed to uncover how different types of financial incentives (matching vs. challenge grants) influence donation behavior. The results showed that **matching grants significantly increased both the likelihood of donating and the average donation amount**, while challenge grants had a weaker and more ambiguous impact.
+
+This experiment has since become a cornerstone in the field of behavioral economics and charitable giving, demonstrating how small shifts in message framing can meaningfully alter real-world behavior.
+
 
 This project seeks to replicate their results.
 
