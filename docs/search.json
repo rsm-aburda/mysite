@@ -4,7 +4,7 @@
     "href": "blog.html",
     "title": "My Blog",
     "section": "",
-    "text": "Homework 2\n\n\n\n\n\n\n\n\n\n\n\n\n\n\n\n\n\n\n\nA Replication of Karlan and List (2007)\n\n\n\n\nAndrew Burda\nApr 22, 2025\n\n\n\n\n\n\n\n\nNo matching items"
+    "text": "Homework 1\n\n\n\n\nAndrew Burda\n\n\n\n\n\n\n\n\n\n\n\n\n\n\nA Replication of Karlan and List (2007)\n\n\n\n\nAndrew Burda\nApr 22, 2025\n\n\n\n\n\n\n\n\nNo matching items"
   },
   {
     "objectID": "projects.html",
@@ -12,6 +12,13 @@
     "title": "My Blog",
     "section": "",
     "text": "No matching items"
+  },
+  {
+    "objectID": "blog/hw2/index.html",
+    "href": "blog/hw2/index.html",
+    "title": "Homework 1",
+    "section": "",
+    "text": "Question 1\nProf says make a chart."
   },
   {
     "objectID": "resume.html",
@@ -33,13 +40,6 @@
     "title": "A Replication of Karlan and List (2007)",
     "section": "",
     "text": "Dean Karlan at Yale and John List at the University of Chicago conducted a field experiment to test the effectiveness of different fundraising letters. They sent out 50,000 fundraising letters to potential donors, randomly assigning each letter to one of three treatments: a standard letter, a matching grant letter, or a challenge grant letter. They published the results of this experiment in the American Economic Review in 2007. The article and supporting data are available from the AEA website and from Innovations for Poverty Action as part of Harvard’s Dataverse.\nThe original experiment was conducted in partnership with a nonprofit that supported economically disadvantaged children. The researchers sent out 50,000 fundraising letters to potential donors, randomly assigning each recipient to one of three treatment groups:\n\nStandard Letter (Control): A basic appeal describing the mission of the organization and requesting support.\nMatching Grant Treatment: A letter stating that donations would be matched dollar-for-dollar by a lead donor, up to a specific amount.\nChallenge Grant Treatment: A letter explaining that a lead donor had pledged a large donation, but only if a threshold level of additional contributions was met.\n\nThe treatments were randomized to ensure internal validity, and the primary outcomes measured were: - A binary indicator of whether a donation was made - The dollar amount donated\nBy comparing outcomes across the three groups, Karlan and List aimed to uncover how different types of financial incentives (matching vs. challenge grants) influence donation behavior. The results showed that matching grants significantly increased both the likelihood of donating and the average donation amount, while challenge grants had a weaker and more ambiguous impact.\nThis experiment has since become a cornerstone in the field of behavioral economics and charitable giving, demonstrating how small shifts in message framing can meaningfully alter real-world behavior.\nThis project seeks to replicate their results."
-  },
-  {
-    "objectID": "projects/Upcycled Supply Co/index.html",
-    "href": "projects/Upcycled Supply Co/index.html",
-    "title": "Andrew Burda",
-    "section": "",
-    "text": "title: “Upcycled Supply Co.” description: “A sustainable gear brand built from upcycled climbing rope and denim.” date: 2025-04-05 categories: [project, sustainability]"
   },
   {
     "objectID": "blog/hw1/index.html#introduction",
@@ -68,5 +68,12 @@
     "title": "A Replication of Karlan and List (2007)",
     "section": "Simulation Experiment",
     "text": "Simulation Experiment\nAs a reminder of how the t-statistic “works,” in this section I use simulation to demonstrate the Law of Large Numbers and the Central Limit Theorem.\nSuppose the true distribution of respondents who do not get a charitable donation match is Bernoulli with probability p=0.018 that a donation is made.\nFurther suppose that the true distribution of respondents who do get a charitable donation match of any size is Bernoulli with probability p=0.022 that a donation is made.\n\nLaw of Large Numbers\nto do: Simulate 10,000 draws from the control distribution and 10,000 draws from the treatment distribution. You’ll then calculate a vector of 10,000 differences, and then you’ll plot the cumulative average of that vector of differences. This average will likely be “noisey” when only averaging a few numbers, but should “settle down” and approximate the treatment effect (0.004 = 0.022 - 0.018) as the sample size gets large. Explain the chart to the reader.\n\n\nCentral Limit Theorem\nto do: Make 4 histograms at sample sizes 50, 200, 500, and 1000. To do this for a sample size of e.g. 50, take 50 draws from each of the control and treatment distributions, and calculate the average difference between those draws. Then repeat that process 999 more times so that you have 1000 averages. Plot the histogram of those averages. The repeat for the other 3 histograms. Explain this sequence of histograms and its relationship to the central limit theorem to the reader."
+  },
+  {
+    "objectID": "projects/Upcycled Supply Co/index.html",
+    "href": "projects/Upcycled Supply Co/index.html",
+    "title": "Andrew Burda",
+    "section": "",
+    "text": "title: “Upcycled Supply Co.” description: “A sustainable gear brand built from upcycled climbing rope and denim.” date: 2025-04-05 categories: [project, sustainability]"
   }
 ]
