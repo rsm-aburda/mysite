@@ -32,7 +32,23 @@ This project seeks to replicate their results.
 
 ### Description
 
-_todo: Read the data into R/Python and describe the data_
+import pandas as pd
+
+### Load the dataset
+df = pd.read_stata("blog/hw1/karlan_list_2007.dta")
+
+### Display basic information about the dataset
+print("=== Data Overview ===")
+print(df.info())
+
+### Show the first few rows
+print("\n=== First 5 Rows ===")
+print(df.head())
+
+### Generate descriptive statistics
+print("\n=== Descriptive Statistics ===")
+print(df.describe(include='all'))
+
 
 :::: {.callout-note collapse="true"}
 ### Variable Definitions
