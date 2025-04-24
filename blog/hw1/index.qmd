@@ -32,26 +32,25 @@ This project seeks to replicate their results.
 
 ### Description
 
+This dataset contains information used in Karlan & List (2007), including treatment indicators, match ratios, suggested donation amounts, and past giving behavior. It is used to evaluate the effect of matching donations in a fundraising experiment.
+
+```{python, engine='python', echo=false}
 import pandas as pd
 
-### Load the dataset
-df = pd.read_stata("blog/hw1/karlan_list_2007.dta")
+# Load the dataset
+df = pd.read_stata("karlan_list_2007.dta")
 
-### Display basic information about the dataset
+# Print basic info (goes to console/log, not HTML)
 print("=== Data Overview ===")
 print(df.info())
 
-### Show the first few rows
 print("\n=== First 5 Rows ===")
 print(df.head())
 
-### Generate descriptive statistics
 print("\n=== Descriptive Statistics ===")
 print(df.describe(include='all'))
+```
 
-
-:::: {.callout-note collapse="true"}
-### Variable Definitions
 
 | Variable             | Description                                                         |
 |----------------------|---------------------------------------------------------------------|
@@ -114,8 +113,43 @@ print(df.describe(include='all'))
 
 As an ad hoc test of the randomization mechanism, I provide a series of tests that compare aspects of the treatment and control groups to assess whether they are statistically significantly different from one another.
 
-_todo: test a few variables other than the key outcome variables (for example, test months since last donation) to see if the treatment and control groups are statistically significantly different at the 95% confidence level. For at least one variable, perform the test as both t-test (use the formula in the class slides) and separately as a linear regression (regress for example mrm2 on treatment); confirm both methods yield the exact same results. It might be helpful to compare parts of your analysis to Table 1 in the paper. Be sure to comment on your results (hint: why is Table 1 included in the paper)._
 
+```{python, engine="python", echo=false}
+import pandas as pd
+import statsmodels.api as sm
+from scipy import stats
+
+# Load the data
+df = pd.read_stata("karlan_list_2007.dta")
+
+# T-test and regression for mrm2
+treat = df[df['treatment'] == 1]['mrm2']
+control = df[df['treatment'] == 0]['mrm2']
+t_stat1, p_val1 = stats.ttest_ind(treat, control, nan_policy='omit')
+
+df['intercept'] = 1
+model1 = sm.OLS(df['mrm2'], df[['intercept', 'treatment']], missing='drop').fit()
+
+# T-test and regression for amount
+treat_amt = df[df['treatment'] == 1]['amount']
+control_amt = df[df['treatment'] == 0]['amount']
+t_stat2, p_val2 = stats.ttest_ind(treat_amt, control_amt, nan_policy='omit')
+
+model2 = sm.OLS(df['amount'], df[['intercept', 'treatment']], missing='drop').fit()
+
+# Print results
+print("=== mrm2 (Months Since Last Donation) ===")
+print(f"T-test: T-stat = {t_stat1:.4f}, P = {p_val1:.4f}")
+print(model1.summary())
+
+print("\n=== amount (Previous Donation Amount) ===")
+print(f"T-test: T-stat = {t_stat2:.4f}, P = {p_val2:.4f}")
+print(model2.summary())
+```
+
+These results show that randomization appears to have worked. There are no statistically significant differences between the treatment and control groups on these baseline characteristics. This is important because it supports the internal validity of the experiment — we can reasonably believe that any differences in donation outcomes later on were caused by the treatment and not by pre-existing differences.
+
+This is exactly why Table 1 is included in Karlan & List (2007) — to show that the treatment assignment was random and the groups were comparable at baseline.
 
 ## Experimental Results
 
@@ -123,35 +157,185 @@ _todo: test a few variables other than the key outcome variables (for example, t
 
 First, I analyze whether matched donations lead to an increased response rate of making a donation. 
 
-_todo: make a barplot with two bars. Each bar is the proportion of people who donated. One bar for treatment and one bar for control._
+```{python, engine="python", echo=false}
+import matplotlib.pyplot as plt
 
-_todo: run a t-test between the treatment and control groups on the binary outcome of whether any charitable donation was made (you can do this as a bivariate linear regression if you want). It may help to confirm your calculations match Table 2a Panel A. Report your statistical results and interpret them in the context of the experiment (e.g., if you found a difference with a small p-value or something that was statistically significant at some threshold, what have you learned about human behavior? Use mostly English words, not numbers or stats, to explain your finding.)_
 
-_todo: run a probit regression where the outcome variable is whether any charitable donation was made and the explanatory variable is assignment to treatment or control._ 
+df['donated'] = (df['amount'] > 0).astype(int)
 
+
+donation_rates = df.groupby('treatment')['donated'].mean()
+
+# Bar plot
+plt.bar(['Control', 'Treatment'], donation_rates)
+plt.ylabel('Proportion Donated')
+plt.title('Donation Rate by Treatment Group')
+plt.ylim(0, 0.15)
+plt.grid(axis='y')
+plt.show()
+```
+
+
+```{python, engine="python", echo=false}
+from scipy import stats
+import statsmodels.api as sm
+
+
+treat_d = df[df['treatment'] == 1]['donated']
+control_d = df[df['treatment'] == 0]['donated']
+t_stat, p_val = stats.ttest_ind(treat_d, control_d)
+print(f"T-test: t = {t_stat:.4f}, p = {p_val:.4f}")
+
+
+model = sm.OLS(df['donated'], df[['intercept', 'treatment']], missing='drop').fit()
+print(model.summary())
+```
+
+
+```{python, engine="python", echo=false}
+import statsmodels.api as sm
+
+
+probit = sm.Probit(df['donated'], df[['intercept', 'treatment']], missing='drop').fit()
+print(probit.summary())
+```
+
+To see if matching donations increased the chance someone donated at all, I compared donation rates between the treatment and control groups.
+
+The bar plot shows a clear difference: people in the treatment group donated at a higher rate than those in the control group.
+
+Using both a t-test and a linear regression, I confirmed that this difference is statistically significant. This means the treatment group, who received a matching offer, was more likely to make any donation.
+
+I also ran a probit regression, which models the probability of making a donation. The results again showed that being assigned to the treatment group had a positive effect on whether someone donated.
+
+What we learn
+This tells us something important about human behavior: people are more likely to give when they know their donation will be matched. Even though the match doesn't change their actual out-of-pocket cost, it creates a stronger sense of impact. That seems to motivate giving.
+
+In the context of charitable giving, this suggests that match offers are an effective tool to increase participation, not just donation amounts. This aligns with the results shown in Table 2a Panel A and Table 3 of the paper.
 _NOTE: Linear regression results appear replicate Table 3 column 1 in the paper. Probit results do not, despite Table 3 indicating its results come from probit regressions..._
 
 
 ### Differences between Match Rates
 
 Next, I assess the effectiveness of different sizes of matched donations on the response rate.
+```{python, engine="python", echo=false}
+# Create 'gave' as a binary outcome: 1 if donation made, else 0
+df['gave'] = (df['amount'] > 0).astype(int)
 
-_todo: Use a series of t-tests to test whether the size of the match ratio has an effect on whether people donate or not. For example, does the 2:1 match rate lead increase the likelihood that someone donates as compared to the 1:1 match rate? Do your results support the "figures suggest" comment the authors make on page 8?_
+# Create a ratio1 dummy (1:1 match is the baseline group)
+df['ratio1'] = (df['ratio'] == '1:1').astype(int)
+df['ratio2'] = (df['ratio'] == '2:1').astype(int)
+df['ratio3'] = (df['ratio'] == '3:1').astype(int)
+```
 
-_todo: Assess the same issue using a regression. Specifically, create the variable `ratio1` then regress `gave` on `ratio1`, `ratio2`, and `ratio3` (or alternatively, regress `gave` on the categorical variable `ratio`). Interpret the coefficients and their statistical precision._
+```{python, engine="python", echo=false}
+from scipy import stats
 
-_todo: Calculate the response rate difference between the 1:1 and 2:1 match ratios and the 2:1 and 3:1 ratios.  Do this directly from the data, and do it by computing the differences in the fitted coefficients of the previous regression. what do you conclude regarding the effectiveness of different sizes of matched donations?_
+# Response rates by match ratio
+rate_1_1 = df[df['ratio'] == '1:1']['gave']
+rate_2_1 = df[df['ratio'] == '2:1']['gave']
+rate_3_1 = df[df['ratio'] == '3:1']['gave']
+
+# T-tests between groups
+t12, p12 = stats.ttest_ind(rate_1_1, rate_2_1, nan_policy='omit')
+t23, p23 = stats.ttest_ind(rate_2_1, rate_3_1, nan_policy='omit')
+
+print(f"1:1 vs 2:1 — T = {t12:.4f}, P = {p12:.4f}")
+print(f"2:1 vs 3:1 — T = {t23:.4f}, P = {p23:.4f}")
+```
+
+
+```{python, engine="python", echo=false}
+import statsmodels.api as sm
+
+# Add intercept
+df['intercept'] = 1
+
+# Regression on dummy variables (1:1 is omitted)
+reg = sm.OLS(df['gave'], df[['intercept', 'ratio2', 'ratio3']], missing='drop').fit()
+print(reg.summary())
+```
+
+
+```{python, engine="python", echo=false}
+# Means from data
+mean_1_1 = rate_1_1.mean()
+mean_2_1 = rate_2_1.mean()
+mean_3_1 = rate_3_1.mean()
+
+print(f"Response rate (1:1): {mean_1_1:.4f}")
+print(f"Response rate (2:1): {mean_2_1:.4f}")
+print(f"Response rate (3:1): {mean_3_1:.4f}")
+print(f"2:1 - 1:1 difference: {mean_2_1 - mean_1_1:.4f}")
+print(f"3:1 - 2:1 difference: {mean_3_1 - mean_2_1:.4f}")
+```
 
 
 ### Size of Charitable Contribution
 
 In this subsection, I analyze the effect of the size of matched donation on the size of the charitable contribution.
 
-_todo: Calculate a t-test or run a bivariate linear regression of the donation amount on the treatment status. What do we learn from doing this analysis?_
+```{python, engine="python", echo=false}
+import statsmodels.api as sm
+from scipy import stats
 
-_todo: now limit the data to just people who made a donation and repeat the previous analysis. This regression allows you to analyze how much respondents donate conditional on donating some positive amount. Interpret the regression coefficients -- what did we learn? Does the treatment coefficient have a causal interpretation?_ 
+# Regression on all observations
+model_all = sm.OLS(df['amount'], df[['intercept', 'treatment']], missing='drop').fit()
+print(model_all.summary())
 
-_todo: Make two plots: one for the treatment group and one for the control. Each plot should be a histogram of the donation amounts only among people who donated. Add a red vertical bar or some other annotation to indicate the sample average for each plot._
+# T-test as a double check
+t_all, p_all = stats.ttest_ind(
+    df[df['treatment'] == 1]['amount'],
+    df[df['treatment'] == 0]['amount'],
+    nan_policy='omit'
+)
+print(f"T-test (all): t = {t_all:.4f}, p = {p_all:.4f}")
+```
+
+
+```{python, engine="python", echo=false}
+# Subset to only donors
+donors = df[df['amount'] > 0]
+
+# Regression on donors only
+model_donors = sm.OLS(donors['amount'], donors[['intercept', 'treatment']], missing='drop').fit()
+print(model_donors.summary())
+
+# Optional: t-test for donors only
+t_don, p_don = stats.ttest_ind(
+    donors[donors['treatment'] == 1]['amount'],
+    donors[donors['treatment'] == 0]['amount'],
+    nan_policy='omit'
+)
+print(f"T-test (donors only): t = {t_don:.4f}, p = {p_don:.4f}")
+```
+
+
+```{python, engine="python", echo=false}
+import matplotlib.pyplot as plt
+
+# Histograms by group
+fig, axs = plt.subplots(1, 2, figsize=(12, 5), sharey=True)
+
+# Control group
+control_don = donors[donors['treatment'] == 0]['amount']
+axs[0].hist(control_don, bins=30, color='skyblue')
+axs[0].axvline(control_don.mean(), color='red', linestyle='dashed', linewidth=2)
+axs[0].set_title('Control Group Donations')
+axs[0].set_xlabel('Donation Amount')
+axs[0].set_ylabel('Frequency')
+
+# Treatment group
+treat_don = donors[donors['treatment'] == 1]['amount']
+axs[1].hist(treat_don, bins=30, color='lightgreen')
+axs[1].axvline(treat_don.mean(), color='red', linestyle='dashed', linewidth=2)
+axs[1].set_title('Treatment Group Donations')
+axs[1].set_xlabel('Donation Amount')
+
+plt.tight_layout()
+plt.show()
+```
+
 
 
 ## Simulation Experiment
@@ -164,14 +348,103 @@ Further suppose that the true distribution of respondents who do get a charitabl
 
 ### Law of Large Numbers
 
-_to do:  Simulate 10,000 draws from the control distribution and 10,000 draws from the treatment distribution. You'll then calculate a vector of 10,000 differences, and then you'll plot the cumulative average of that vector of differences. This average will likely be "noisey" when only averaging a few numbers, but should "settle down" and approximate the treatment effect (0.004 = 0.022 - 0.018) as the sample size gets large. Explain the chart to the reader._
+```{python, engine="python", echo=false}
+import numpy as np
+import matplotlib.pyplot as plt
 
+# Set the seed for reproducibility
+np.random.seed(42)
+
+# Simulate 10,000 Bernoulli draws for control (p=0.018) and treatment (p=0.022)
+control_draws = np.random.binomial(1, 0.018, 10000)
+treatment_draws = np.random.binomial(1, 0.022, 10000)
+
+# Calculate difference at each pair of draws
+differences = treatment_draws - control_draws
+
+# Compute cumulative average of the differences
+cumulative_avg = np.cumsum(differences) / np.arange(1, len(differences) + 1)
+
+# Plot the cumulative average
+plt.figure(figsize=(10, 5))
+plt.plot(cumulative_avg, color='navy')
+plt.axhline(0.004, color='red', linestyle='--', label='True Avg Difference (0.004)')
+plt.title("Cumulative Average Difference (LLN in Action)")
+plt.xlabel("Number of Observations")
+plt.ylabel("Cumulative Average (Treatment - Control)")
+plt.legend()
+plt.grid(True)
+plt.show()
+```
+
+To show how the Law of Large Numbers (LLN) works, I simulated 10,000 random draws from each group’s true donation distribution:
+
+Control group had a 1.8% chance of donating (p = 0.018)
+
+Treatment group had a 2.2% chance (p = 0.022)
+
+At each draw, I calculated the difference between treatment and control and then plotted the cumulative average of those differences.
+
+What we learn:
+Early in the plot, the average difference jumps around — this is due to random noise when sample sizes are small.
+
+But as more data is added, the average settles down near the true expected treatment effect: 0.004.
+
+This is the Law of Large Numbers in action: with more observations, our sample average converges to the true population average.
+
+This helps explain why large sample sizes make our experimental estimates more reliable and less sensitive to random variation.
 
 ### Central Limit Theorem
 
-_to do: Make 4 histograms at sample sizes 50, 200, 500, and 1000.  To do this for a sample size of e.g. 50, take 50 draws from each of the control and treatment distributions, and calculate the average difference between those draws. Then repeat that process 999 more times so that you have 1000 averages. Plot the histogram of those averages. The repeat for the other 3 histograms. Explain this sequence of histograms and its relationship to the central limit theorem to the reader._
+```{python, engine="python", echo=false}
+import numpy as np
+import matplotlib.pyplot as plt
 
+# Set seed
+np.random.seed(42)
 
+# Define sample sizes to test
+sample_sizes = [50, 200, 500, 1000]
+simulations = 1000
+
+# True probabilities
+p_control = 0.018
+p_treat = 0.022
+
+# Prepare plots
+fig, axs = plt.subplots(2, 2, figsize=(12, 8))
+axs = axs.flatten()
+
+for i, n in enumerate(sample_sizes):
+    diffs = []
+    for _ in range(simulations):
+        c = np.random.binomial(1, p_control, n)
+        t = np.random.binomial(1, p_treat, n)
+        diffs.append(t.mean() - c.mean())
+
+    axs[i].hist(diffs, bins=30, color='skyblue', edgecolor='black')
+    axs[i].axvline(0.004, color='red', linestyle='--', label='True Avg Diff (0.004)')
+    axs[i].set_title(f"Sample Size = {n}")
+    axs[i].set_xlabel("Avg Difference (Treatment - Control)")
+    axs[i].set_ylabel("Frequency")
+    axs[i].legend()
+
+plt.tight_layout()
+plt.show()
+```
+
+To visualize the Central Limit Theorem (CLT), I created four histograms showing the sampling distribution of the average difference in donation rates between the treatment and control groups. For each sample size — 50, 200, 500, and 1000 — I simulated 1000 experiments and plotted the results.
+
+What we learn:
+With small samples (like 50), the distribution is wide and irregular — more influenced by random chance.
+
+As the sample size increases, the distributions become tighter and more bell-shaped.
+
+By the time we reach 1000 draws, the sampling distribution is narrow and symmetric, closely resembling a normal distribution centered near the true difference (0.004).
+
+This shows the Central Limit Theorem in action: as the number of observations increases, the average of random variables (in this case, donation differences) becomes more predictable and normally distributed — even if the original data is binary.
+
+This helps us understand why t-tests and confidence intervals work well in large-sample experiments — because the underlying averages behave in a stable, normal way.
 
 
 
