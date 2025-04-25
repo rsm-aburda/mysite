@@ -37,10 +37,10 @@ This dataset contains information used in Karlan & List (2007), including treatm
 ```{python, engine='python', echo=false}
 import pandas as pd
 
-# Load the dataset
+
 df = pd.read_stata("karlan_list_2007.dta")
 
-# Print basic info (goes to console/log, not HTML)
+
 print("=== Data Overview ===")
 print(df.info())
 
@@ -115,11 +115,11 @@ As an ad hoc test of the randomization mechanism, I provide a series of tests th
 
 
 ```{python, engine="python", echo=false}
-import pandas as pd
+
 import statsmodels.api as sm
 from scipy import stats
 
-# Load the data
+
 df = pd.read_stata("karlan_list_2007.dta")
 
 # T-test and regression for mrm2
@@ -137,7 +137,7 @@ t_stat2, p_val2 = stats.ttest_ind(treat_amt, control_amt, nan_policy='omit')
 
 model2 = sm.OLS(df['amount'], df[['intercept', 'treatment']], missing='drop').fit()
 
-# Print results
+
 print("=== mrm2 (Months Since Last Donation) ===")
 print(f"T-test: T-stat = {t_stat1:.4f}, P = {p_val1:.4f}")
 print(model1.summary())
@@ -177,8 +177,7 @@ plt.show()
 
 
 ```{python, engine="python", echo=false}
-from scipy import stats
-import statsmodels.api as sm
+
 
 
 treat_d = df[df['treatment'] == 1]['donated']
@@ -193,7 +192,6 @@ print(model.summary())
 
 
 ```{python, engine="python", echo=false}
-import statsmodels.api as sm
 
 
 probit = sm.Probit(df['donated'], df[['intercept', 'treatment']], missing='drop').fit()
@@ -219,10 +217,10 @@ _NOTE: Linear regression results appear replicate Table 3 column 1 in the paper.
 
 Next, I assess the effectiveness of different sizes of matched donations on the response rate.
 ```{python, engine="python", echo=false}
-# Create 'gave' as a binary outcome: 1 if donation made, else 0
+
 df['gave'] = (df['amount'] > 0).astype(int)
 
-# Create a ratio1 dummy (1:1 match is the baseline group)
+
 df['ratio1'] = (df['ratio'] == '1:1').astype(int)
 df['ratio2'] = (df['ratio'] == '2:1').astype(int)
 df['ratio3'] = (df['ratio'] == '3:1').astype(int)
@@ -246,7 +244,7 @@ print(f"2:1 vs 3:1 — T = {t23:.4f}, P = {p23:.4f}")
 
 
 ```{python, engine="python", echo=false}
-import statsmodels.api as sm
+
 
 # Add intercept
 df['intercept'] = 1
@@ -258,7 +256,7 @@ print(reg.summary())
 
 
 ```{python, engine="python", echo=false}
-# Means from data
+
 mean_1_1 = rate_1_1.mean()
 mean_2_1 = rate_2_1.mean()
 mean_3_1 = rate_3_1.mean()
@@ -276,8 +274,7 @@ print(f"3:1 - 2:1 difference: {mean_3_1 - mean_2_1:.4f}")
 In this subsection, I analyze the effect of the size of matched donation on the size of the charitable contribution.
 
 ```{python, engine="python", echo=false}
-import statsmodels.api as sm
-from scipy import stats
+
 
 # Regression on all observations
 model_all = sm.OLS(df['amount'], df[['intercept', 'treatment']], missing='drop').fit()
@@ -350,9 +347,8 @@ Further suppose that the true distribution of respondents who do get a charitabl
 
 ```{python, engine="python", echo=false}
 import numpy as np
-import matplotlib.pyplot as plt
 
-# Set the seed for reproducibility
+
 np.random.seed(42)
 
 # Simulate 10,000 Bernoulli draws for control (p=0.018) and treatment (p=0.022)
@@ -400,14 +396,13 @@ This helps explain why large sample sizes make our experimental estimates more r
 import numpy as np
 import matplotlib.pyplot as plt
 
-# Set seed
 np.random.seed(42)
 
-# Define sample sizes to test
+
 sample_sizes = [50, 200, 500, 1000]
 simulations = 1000
 
-# True probabilities
+
 p_control = 0.018
 p_treat = 0.022
 
