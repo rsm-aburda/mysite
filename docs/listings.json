@@ -2,8 +2,11 @@
   {
     "listing": "/blog.html",
     "items": [
+      "/blog/hw4/index.html",
       "/blog/hw2/index.html",
-      "/blog/hw1/index.html"
+      "/blog/hw1/index.html",
+      "/blog/hw3/index.html",
+      "/blog/hw5/index.html"
     ]
   },
   {
