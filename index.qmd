@@ -1,21 +1,24 @@
 ---
-title: "Andrew Burda"
+title: "Hi, I'm Andrew 👋 "
 image: images/DSC03702.jpg
 
-about: 
-    template: solana
-    links:
-        - icon: envelope
-          text: Email
-          href: mailto:aburda531@gmail.com
-        - icon: linkedin
-          text: Linkedin
-          href: https://www.linkedin.com/in/andrew-burda/
-        - icon: github
-          text: Github
-          href: https://github.com/rsm-aburda
+about:
+  template: solana
+  links:
+    - icon: envelope
+      text: Email
+      href: mailto:aburda531@gmail.com
+    - icon: linkedin
+      text: LinkedIn
+      href: https://www.linkedin.com/in/andrew-burda/
+    - icon: github
+      text: GitHub
+      href: https://github.com/rsm-aburda
 ---
 
-This is a Quarto website.
+Currently I'm a Data Analyst at GIA 💎 where I work on product analytics, experimentation, and roadmap development for internal and external platforms. 
 
-To learn more about Quarto websites visit <https://quarto.org/docs/websites>.
+Currently, I’m pursuing my Master’s in Business Analytics at UC San Diego, where I’m deepening my skills in predictive modeling, statistical analysis, and decision science.
+
+---
+

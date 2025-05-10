@@ -12,12 +12,12 @@ website:
         text: Resume
       - href: blog.qmd
         text: Homework
+      - href: projects.qmd
+        text: Projects
 
 format:
   html:
-    theme:
-      - cosmo
-      - brand
+    theme: cosmo
     css: styles.css
     toc: true
 
