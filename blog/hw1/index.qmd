@@ -1,5 +1,6 @@
 ---
 title: "A Replication of Karlan and List (2007)"
+image: images/hw1.png
 author: "Andrew Burda"
 date: today
 callout-appearance: minimal
