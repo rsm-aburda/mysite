@@ -2,6 +2,6 @@
 title: "Andrew's Resume"
 ---
 
-_Last updated 2025-4-5_
+_Last updated 2024-4-5_
 
 {{< pdf other_documents/Andrew_Burda_Resume_2024.pdf width= 100% height =800 >}}
