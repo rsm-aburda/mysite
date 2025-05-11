@@ -7,8 +7,9 @@
 <meta name="viewport" content="width=device-width, initial-scale=1.0, user-scalable=yes">
 
 <meta name="author" content="Andrew Burda">
+<meta name="dcterms.date" content="2025-05-11">
 
-<title>Homework 2 – Andrew Burda</title>
+<title>Poisson Regression Examples – Andrew Burda</title>
 <style>
 code{white-space: pre-wrap;}
 span.smallcaps{font-variant: small-caps;}
@@ -24,7 +25,7 @@ ul.task-list li input[type="checkbox"] {
 </style>
 
 
-<script src="../../site_libs/quarto-nav/quarto-nav.js"></script>
+<script src="https://cdnjs.cloudflare.com/ajax/libs/jquery/3.5.1/jquery.min.js" integrity="sha512-bLT0Qm9VnAYZDflyKcBaQ2gg0hSYNQrJ8RilYldYQ1FxQYoCLtUjuuRuZo+fjqhx/qtq/1itJ0C2ejDxltZVFg==" crossorigin="anonymous"></script><script src="../../site_libs/quarto-nav/quarto-nav.js"></script>
 <script src="../../site_libs/quarto-nav/headroom.min.js"></script>
 <script src="../../site_libs/clipboard/clipboard.min.js"></script>
 <script src="../../site_libs/quarto-search/autocomplete.umd.js"></script>
@@ -67,7 +68,39 @@ ul.task-list li input[type="checkbox"] {
     "search-label": "Search"
   }
 }</script>
+<script src="https://cdnjs.cloudflare.com/ajax/libs/require.js/2.3.6/require.min.js" integrity="sha512-c3Nl8+7g4LMSTdrm621y7kf9v3SDPnhxLNhcjFJbKECVnmZHTdo+IRO05sNLTH/D3vA6u1X32ehoLC7WFVdheg==" crossorigin="anonymous"></script>
 
+<script type="application/javascript">define('jquery', [],function() {return window.jQuery;})</script>
+
+  <script src="https://cdnjs.cloudflare.com/polyfill/v3/polyfill.min.js?features=es6"></script>
+  <script src="https://cdn.jsdelivr.net/npm/mathjax@3/es5/tex-chtml-full.js" type="text/javascript"></script>
+
+<script type="text/javascript">
+const typesetMath = (el) => {
+  if (window.MathJax) {
+    // MathJax Typeset
+    window.MathJax.typeset([el]);
+  } else if (window.katex) {
+    // KaTeX Render
+    var mathElements = el.getElementsByClassName("math");
+    var macros = [];
+    for (var i = 0; i < mathElements.length; i++) {
+      var texText = mathElements[i].firstChild;
+      if (mathElements[i].tagName == "SPAN") {
+        window.katex.render(texText.data, mathElements[i], {
+          displayMode: mathElements[i].classList.contains('display'),
+          throwOnError: false,
+          macros: macros,
+          fleqn: false
+        });
+      }
+    }
+  }
+}
+window.Quarto = {
+  typesetMath
+};
+</script>
 
 <link rel="stylesheet" href="../../styles.css">
 </head>
@@ -99,7 +132,7 @@ ul.task-list li input[type="checkbox"] {
   </li>  
   <li class="nav-item">
     <a class="nav-link" href="../../blog.html"> 
-<span class="menu-text">Homework</span></a>
+<span class="menu-text">Blog</span></a>
   </li>  
   <li class="nav-item">
     <a class="nav-link" href="../../projects.html"> 
@@ -121,7 +154,25 @@ ul.task-list li input[type="checkbox"] {
     <h2 id="toc-title">On this page</h2>
    
   <ul>
-  <li><a href="#question-1" id="toc-question-1" class="nav-link active" data-scroll-target="#question-1">Question 1</a></li>
+  <li><a href="#blueprinty-case-study" id="toc-blueprinty-case-study" class="nav-link active" data-scroll-target="#blueprinty-case-study">Blueprinty Case Study</a>
+  <ul class="collapse">
+  <li><a href="#introduction" id="toc-introduction" class="nav-link" data-scroll-target="#introduction">Introduction</a></li>
+  <li><a href="#data" id="toc-data" class="nav-link" data-scroll-target="#data">Data</a></li>
+  <li><a href="#estimation-of-simple-poisson-model" id="toc-estimation-of-simple-poisson-model" class="nav-link" data-scroll-target="#estimation-of-simple-poisson-model">Estimation of Simple Poisson Model</a></li>
+  <li><a href="#estimation-of-simple-poisson-model-1" id="toc-estimation-of-simple-poisson-model-1" class="nav-link" data-scroll-target="#estimation-of-simple-poisson-model-1">Estimation of Simple Poisson Model</a></li>
+  <li><a href="#analytical-mle-derivation" id="toc-analytical-mle-derivation" class="nav-link" data-scroll-target="#analytical-mle-derivation">Analytical MLE Derivation</a></li>
+  <li><a href="#estimation-of-poisson-regression-model" id="toc-estimation-of-poisson-regression-model" class="nav-link" data-scroll-target="#estimation-of-poisson-regression-model">Estimation of Poisson Regression Model</a></li>
+  <li><a href="#interpretation" id="toc-interpretation" class="nav-link" data-scroll-target="#interpretation">Interpretation</a></li>
+  <li><a href="#interpretation-1" id="toc-interpretation-1" class="nav-link" data-scroll-target="#interpretation-1">Interpretation</a></li>
+  </ul></li>
+  <li><a href="#airbnb-case-study" id="toc-airbnb-case-study" class="nav-link" data-scroll-target="#airbnb-case-study">AirBnB Case Study</a>
+  <ul class="collapse">
+  <li><a href="#introduction-1" id="toc-introduction-1" class="nav-link" data-scroll-target="#introduction-1">Introduction</a></li>
+  <li><a href="#exploratory-data-analysis" id="toc-exploratory-data-analysis" class="nav-link" data-scroll-target="#exploratory-data-analysis">Exploratory Data Analysis</a></li>
+  <li><a href="#observations" id="toc-observations" class="nav-link" data-scroll-target="#observations">Observations</a></li>
+  <li><a href="#differences-in-age-and-region-by-customer-status" id="toc-differences-in-age-and-region-by-customer-status" class="nav-link" data-scroll-target="#differences-in-age-and-region-by-customer-status">Differences in Age and Region by Customer Status</a></li>
+  <li><a href="#observations-1" id="toc-observations-1" class="nav-link" data-scroll-target="#observations-1">Observations</a></li>
+  </ul></li>
   </ul>
 </nav>
     </div>
@@ -130,7 +181,7 @@ ul.task-list li input[type="checkbox"] {
 
 <header id="title-block-header" class="quarto-title-block default">
 <div class="quarto-title">
-<h1 class="title">Homework 2</h1>
+<h1 class="title">Poisson Regression Examples</h1>
 </div>
 
 
@@ -144,6 +195,12 @@ ul.task-list li input[type="checkbox"] {
           </div>
   </div>
     
+    <div>
+    <div class="quarto-title-meta-heading">Published</div>
+    <div class="quarto-title-meta-contents">
+      <p class="date">May 11, 2025</p>
+    </div>
+  </div>
   
     
   </div>
@@ -153,11 +210,594 @@ ul.task-list li input[type="checkbox"] {
 </header>
 
 
-<section id="question-1" class="level1">
-<h1>Question 1</h1>
-<p>Prof says make a chart.</p>
+<section id="blueprinty-case-study" class="level2">
+<h2 class="anchored" data-anchor-id="blueprinty-case-study">Blueprinty Case Study</h2>
+<section id="introduction" class="level3">
+<h3 class="anchored" data-anchor-id="introduction">Introduction</h3>
+<p>Blueprinty is a small firm that makes software for developing blueprints specifically for submitting patent applications to the US patent office. Their marketing team would like to make the claim that patent applicants using Blueprinty’s software are more successful in getting their patent applications approved. Ideal data to study such an effect might include the success rate of patent applications before using Blueprinty’s software and after using it. Unfortunately, such data is not available.</p>
+<p>However, Blueprinty has collected data on 1,500 mature (non-startup) engineering firms. The data include each firm’s number of patents awarded over the last 5 years, regional location, age since incorporation, and whether or not the firm uses Blueprinty’s software. The marketing team would like to use this data to make the claim that firms using Blueprinty’s software are more successful in getting their patent applications approved.</p>
+</section>
+<section id="data" class="level3">
+<h3 class="anchored" data-anchor-id="data">Data</h3>
+<p>We begin by loading the dataset and performing exploratory analysis.</p>
+<div id="e27ea044" class="cell" data-message="false" data-execution_count="1">
+<div class="cell-output cell-output-stdout">
+<pre><code>      patents     region   age  iscustomer
+0           0    Midwest  32.5           0
+1           3  Southwest  37.5           0
+2           4  Northwest  27.0           1
+3           3  Northeast  24.5           0
+4           3  Southwest  37.0           0
+...       ...        ...   ...         ...
+1495        2  Northeast  18.5           1
+1496        3  Southwest  22.5           0
+1497        4  Southwest  17.0           0
+1498        3      South  29.0           0
+1499        1      South  39.0           0
+
+[1500 rows x 4 columns]</code></pre>
+</div>
+<div class="cell-output cell-output-display">
+<div>
+<figure class="figure">
+<p><img src="index_files/figure-html/cell-2-output-2.png" width="661" height="468" class="figure-img"></p>
+</figure>
+</div>
+</div>
+<div class="cell-output cell-output-display" data-execution_count="1">
+<div>
 
 
+<table class="dataframe caption-top table table-sm table-striped small" data-quarto-postprocess="true" data-border="1">
+<thead>
+<tr class="header">
+<th data-quarto-table-cell-role="th"></th>
+<th data-quarto-table-cell-role="th">mean</th>
+<th data-quarto-table-cell-role="th">median</th>
+<th data-quarto-table-cell-role="th">std</th>
+<th data-quarto-table-cell-role="th">count</th>
+</tr>
+<tr class="even">
+<th data-quarto-table-cell-role="th">iscustomer</th>
+<th data-quarto-table-cell-role="th"></th>
+<th data-quarto-table-cell-role="th"></th>
+<th data-quarto-table-cell-role="th"></th>
+<th data-quarto-table-cell-role="th"></th>
+</tr>
+</thead>
+<tbody>
+<tr class="odd">
+<td data-quarto-table-cell-role="th">Non-Customer</td>
+<td>3.473013</td>
+<td>3.0</td>
+<td>2.225060</td>
+<td>1019</td>
+</tr>
+<tr class="even">
+<td data-quarto-table-cell-role="th">Customer</td>
+<td>4.133056</td>
+<td>4.0</td>
+<td>2.546846</td>
+<td>481</td>
+</tr>
+</tbody>
+</table>
+
+</div>
+</div>
+</div>
+<p>Next, we examine whether customer firms differ in age and regional location.<br>
+Blueprinty customers are not selected at random. It may be important to account for systematic differences in the age and regional location of customers vs non-customers.</p>
+<div id="ce70ea0f" class="cell" data-message="false" data-execution_count="2">
+<div class="cell-output cell-output-display">
+<div>
+<figure class="figure">
+<p><img src="index_files/figure-html/cell-3-output-1.png" width="661" height="468" class="figure-img"></p>
+</figure>
+</div>
+</div>
+<div class="cell-output cell-output-display" data-execution_count="2">
+<style type="text/css">
+</style>
+
+<table id="T_dea74" class="caption-top table table-sm table-striped small" data-quarto-postprocess="true">
+<thead>
+<tr class="header">
+<th class="index_name level0" data-quarto-table-cell-role="th">iscustomer</th>
+<th id="T_dea74_level0_col0" class="col_heading level0 col0" data-quarto-table-cell-role="th">Non-Customer</th>
+<th id="T_dea74_level0_col1" class="col_heading level0 col1" data-quarto-table-cell-role="th">Customer</th>
+</tr>
+<tr class="even">
+<th class="index_name level0" data-quarto-table-cell-role="th">region</th>
+<th class="blank col0" data-quarto-table-cell-role="th">&nbsp;</th>
+<th class="blank col1" data-quarto-table-cell-role="th">&nbsp;</th>
+</tr>
+</thead>
+<tbody>
+<tr class="odd">
+<td id="T_dea74_level0_row0" class="row_heading level0 row0" data-quarto-table-cell-role="th">Midwest</td>
+<td id="T_dea74_row0_col0" class="data row0 col0">83.5%</td>
+<td id="T_dea74_row0_col1" class="data row0 col1">16.5%</td>
+</tr>
+<tr class="even">
+<td id="T_dea74_level0_row1" class="row_heading level0 row1" data-quarto-table-cell-role="th">Northeast</td>
+<td id="T_dea74_row1_col0" class="data row1 col0">45.4%</td>
+<td id="T_dea74_row1_col1" class="data row1 col1">54.6%</td>
+</tr>
+<tr class="odd">
+<td id="T_dea74_level0_row2" class="row_heading level0 row2" data-quarto-table-cell-role="th">Northwest</td>
+<td id="T_dea74_row2_col0" class="data row2 col0">84.5%</td>
+<td id="T_dea74_row2_col1" class="data row2 col1">15.5%</td>
+</tr>
+<tr class="even">
+<td id="T_dea74_level0_row3" class="row_heading level0 row3" data-quarto-table-cell-role="th">South</td>
+<td id="T_dea74_row3_col0" class="data row3 col0">81.7%</td>
+<td id="T_dea74_row3_col1" class="data row3 col1">18.3%</td>
+</tr>
+<tr class="odd">
+<td id="T_dea74_level0_row4" class="row_heading level0 row4" data-quarto-table-cell-role="th">Southwest</td>
+<td id="T_dea74_row4_col0" class="data row4 col0">82.5%</td>
+<td id="T_dea74_row4_col1" class="data row4 col1">17.5%</td>
+</tr>
+</tbody>
+</table>
+</div>
+</div>
+<p>We observe that firms using Blueprinty tend to have more patents on average than those who do not. However, this raw difference may reflect underlying firm characteristics.</p>
+</section>
+<section id="estimation-of-simple-poisson-model" class="level3">
+<h3 class="anchored" data-anchor-id="estimation-of-simple-poisson-model">Estimation of Simple Poisson Model</h3>
+<p>Since our outcome variable of interest can only be small integer values per a set unit of time, we can use a Poisson density to model the number of patents awarded to each engineering firm over the last 5 years. We start by estimating a simple Poisson model via Maximum Likelihood.</p>
+</section>
+<section id="estimation-of-simple-poisson-model-1" class="level3">
+<h3 class="anchored" data-anchor-id="estimation-of-simple-poisson-model-1">Estimation of Simple Poisson Model</h3>
+<p>Since our outcome variable of interest can only be small integer values per a set unit of time, we can use a Poisson distribution to model the number of patents awarded to each engineering firm over the last 5 years. We start by estimating a simple Poisson model via Maximum Likelihood.</p>
+<p>The probability mass function (pmf) of the Poisson distribution is:</p>
+<p><span class="math display">\[
+f(Y_i \mid \lambda) = \frac{e^{-\lambda} \lambda^{Y_i}}{Y_i!}
+\]</span></p>
+<p>Assuming independent observations across firms, the <strong>likelihood</strong> function for <span class="math inline">\(n\)</span> firms is:</p>
+<p><span class="math display">\[
+\mathcal{L}(\lambda) = \prod_{i=1}^{n} \frac{e^{-\lambda} \lambda^{Y_i}}{Y_i!}
+\]</span></p>
+<p>Taking the log of the likelihood (to get the <strong>log-likelihood</strong>), we obtain:</p>
+<p><span class="math display">\[
+\log \mathcal{L}(\lambda) = \sum_{i=1}^{n} \left( -\lambda + Y_i \log \lambda - \log Y_i! \right)
+\]</span></p>
+<p>In the next step, we will numerically maximize this function to find the maximum likelihood estimate (MLE) of <span class="math inline">\(\lambda\)</span>.</p>
+<div id="396e7a74" class="cell" data-message="false" data-execution_count="3">
+<div class="cell-output cell-output-display" data-execution_count="3">
+<pre><code>6548.8869900694435</code></pre>
+</div>
+</div>
+<p>poisson_loglikelihood &lt;- function(lambda, Y){ … }</p>
+<div id="506ea8f8" class="cell" data-message="false" data-execution_count="4">
+<div class="cell-output cell-output-display">
+<div>
+<figure class="figure">
+<p><img src="index_files/figure-html/cell-5-output-1.png" width="757" height="468" class="figure-img"></p>
+</figure>
+</div>
+</div>
+</div>
+</section>
+<section id="analytical-mle-derivation" class="level3">
+<h3 class="anchored" data-anchor-id="analytical-mle-derivation">Analytical MLE Derivation</h3>
+<p>To find the MLE analytically, we take the derivative of the log-likelihood:</p>
+<p><span class="math display">\[
+\log \mathcal{L}(\lambda) = \sum_{i=1}^{n} \left( -\lambda + Y_i \log \lambda - \log Y_i! \right)
+\]</span></p>
+<p>Take the derivative with respect to <span class="math inline">\(\lambda\)</span>:</p>
+<p><span class="math display">\[
+\frac{d}{d\lambda} \log \mathcal{L}(\lambda) = \sum_{i=1}^{n} \left( -1 + \frac{Y_i}{\lambda} \right)
+= -n + \frac{1}{\lambda} \sum_{i=1}^{n} Y_i
+\]</span></p>
+<p>Set this equal to 0:</p>
+<p><span class="math display">\[
+-n + \frac{1}{\lambda} \sum Y_i = 0 \quad \Rightarrow \quad \lambda_{\text{MLE}} = \frac{1}{n} \sum Y_i = \bar{Y}
+\]</span></p>
+<p>Thus, the maximum likelihood estimator of <span class="math inline">\(\lambda\)</span> is simply the <strong>sample mean</strong> of the observed patent counts, which aligns with intuition: for a Poisson distribution, the mean and variance are both equal to <span class="math inline">\(\lambda\)</span>.</p>
+<div id="ee490ef6" class="cell" data-message="false" data-execution_count="5">
+<div class="cell-output cell-output-display" data-execution_count="5">
+<pre><code>3.6846667021660804</code></pre>
+</div>
+</div>
+</section>
+<section id="estimation-of-poisson-regression-model" class="level3">
+<h3 class="anchored" data-anchor-id="estimation-of-poisson-regression-model">Estimation of Poisson Regression Model</h3>
+<p>Next, we extend our simple Poisson model to a Poisson Regression Model such that <span class="math inline">\(Y_i \sim \text{Poisson}(\lambda_i)\)</span> where <span class="math inline">\(\lambda_i = \exp(X_i'\beta)\)</span>. The interpretation is that the rate of patent awards varies by firm characteristics <span class="math inline">\(X_i\)</span>.</p>
+<p>We now update our log-likelihood function to be a function of a vector of regression coefficients <span class="math inline">\(\beta\)</span> and a covariate matrix <span class="math inline">\(X\)</span>:</p>
+<pre><code>poisson_regression_likelihood &lt;- function(beta, Y, X){
+   ...
+}</code></pre>
+<div id="02589dac" class="cell" data-message="false" data-execution_count="7">
+<div class="cell-output cell-output-display" data-execution_count="7">
+<div>
+
+
+<table class="dataframe caption-top table table-sm table-striped small" data-quarto-postprocess="true" data-border="1">
+<thead>
+<tr class="header">
+<th data-quarto-table-cell-role="th"></th>
+<th data-quarto-table-cell-role="th">Coefficient</th>
+<th data-quarto-table-cell-role="th">Std. Error</th>
+</tr>
+</thead>
+<tbody>
+<tr class="odd">
+<td data-quarto-table-cell-role="th">Intercept</td>
+<td>1.480059</td>
+<td>1.0</td>
+</tr>
+<tr class="even">
+<td data-quarto-table-cell-role="th">C(region, Treatment)[T.Northeast]</td>
+<td>0.640979</td>
+<td>1.0</td>
+</tr>
+<tr class="odd">
+<td data-quarto-table-cell-role="th">C(region, Treatment)[T.Northwest]</td>
+<td>0.164288</td>
+<td>1.0</td>
+</tr>
+<tr class="even">
+<td data-quarto-table-cell-role="th">C(region, Treatment)[T.South]</td>
+<td>0.181562</td>
+<td>1.0</td>
+</tr>
+<tr class="odd">
+<td data-quarto-table-cell-role="th">C(region, Treatment)[T.Southwest]</td>
+<td>0.295497</td>
+<td>1.0</td>
+</tr>
+<tr class="even">
+<td data-quarto-table-cell-role="th">age</td>
+<td>38.016417</td>
+<td>1.0</td>
+</tr>
+<tr class="odd">
+<td data-quarto-table-cell-role="th">age_sq</td>
+<td>1033.539585</td>
+<td>1.0</td>
+</tr>
+<tr class="even">
+<td data-quarto-table-cell-role="th">iscustomer</td>
+<td>0.553874</td>
+<td>1.0</td>
+</tr>
+</tbody>
+</table>
+
+</div>
+</div>
+</div>
+<div id="50e3fb42" class="cell" data-message="false" data-execution_count="8">
+<div class="cell-output cell-output-display" data-execution_count="8">
+<table class="simpletable caption-top table table-sm table-striped small" data-quarto-postprocess="true">
+<caption>Generalized Linear Model Regression Results</caption>
+<tbody>
+<tr class="odd">
+<td data-quarto-table-cell-role="th">Dep. Variable:</td>
+<td>y</td>
+<td data-quarto-table-cell-role="th">No. Observations:</td>
+<td>1500</td>
+</tr>
+<tr class="even">
+<td data-quarto-table-cell-role="th">Model:</td>
+<td>GLM</td>
+<td data-quarto-table-cell-role="th">Df Residuals:</td>
+<td>1492</td>
+</tr>
+<tr class="odd">
+<td data-quarto-table-cell-role="th">Model Family:</td>
+<td>Poisson</td>
+<td data-quarto-table-cell-role="th">Df Model:</td>
+<td>7</td>
+</tr>
+<tr class="even">
+<td data-quarto-table-cell-role="th">Link Function:</td>
+<td>Log</td>
+<td data-quarto-table-cell-role="th">Scale:</td>
+<td>1.0000</td>
+</tr>
+<tr class="odd">
+<td data-quarto-table-cell-role="th">Method:</td>
+<td>IRLS</td>
+<td data-quarto-table-cell-role="th">Log-Likelihood:</td>
+<td>-3258.1</td>
+</tr>
+<tr class="even">
+<td data-quarto-table-cell-role="th">Date:</td>
+<td>Sun, 11 May 2025</td>
+<td data-quarto-table-cell-role="th">Deviance:</td>
+<td>2143.3</td>
+</tr>
+<tr class="odd">
+<td data-quarto-table-cell-role="th">Time:</td>
+<td>15:07:59</td>
+<td data-quarto-table-cell-role="th">Pearson chi2:</td>
+<td>2.07e+03</td>
+</tr>
+<tr class="even">
+<td data-quarto-table-cell-role="th">No. Iterations:</td>
+<td>5</td>
+<td data-quarto-table-cell-role="th">Pseudo R-squ. (CS):</td>
+<td>0.1360</td>
+</tr>
+<tr class="odd">
+<td data-quarto-table-cell-role="th">Covariance Type:</td>
+<td>nonrobust</td>
+<td data-quarto-table-cell-role="th"></td>
+<td></td>
+</tr>
+</tbody>
+</table>
+
+
+<table class="simpletable caption-top table table-sm table-striped small" data-quarto-postprocess="true">
+<tbody>
+<tr class="odd">
+<td></td>
+<td data-quarto-table-cell-role="th">coef</td>
+<td data-quarto-table-cell-role="th">std err</td>
+<td data-quarto-table-cell-role="th">z</td>
+<td data-quarto-table-cell-role="th">P&gt;|z|</td>
+<td data-quarto-table-cell-role="th">[0.025</td>
+<td data-quarto-table-cell-role="th">0.975]</td>
+</tr>
+<tr class="even">
+<td data-quarto-table-cell-role="th">Intercept</td>
+<td>-0.5089</td>
+<td>0.183</td>
+<td>-2.778</td>
+<td>0.005</td>
+<td>-0.868</td>
+<td>-0.150</td>
+</tr>
+<tr class="odd">
+<td data-quarto-table-cell-role="th">C(region, Treatment)[T.Northeast]</td>
+<td>0.0292</td>
+<td>0.044</td>
+<td>0.669</td>
+<td>0.504</td>
+<td>-0.056</td>
+<td>0.115</td>
+</tr>
+<tr class="even">
+<td data-quarto-table-cell-role="th">C(region, Treatment)[T.Northwest]</td>
+<td>-0.0176</td>
+<td>0.054</td>
+<td>-0.327</td>
+<td>0.744</td>
+<td>-0.123</td>
+<td>0.088</td>
+</tr>
+<tr class="odd">
+<td data-quarto-table-cell-role="th">C(region, Treatment)[T.South]</td>
+<td>0.0566</td>
+<td>0.053</td>
+<td>1.074</td>
+<td>0.283</td>
+<td>-0.047</td>
+<td>0.160</td>
+</tr>
+<tr class="even">
+<td data-quarto-table-cell-role="th">C(region, Treatment)[T.Southwest]</td>
+<td>0.0506</td>
+<td>0.047</td>
+<td>1.072</td>
+<td>0.284</td>
+<td>-0.042</td>
+<td>0.143</td>
+</tr>
+<tr class="odd">
+<td data-quarto-table-cell-role="th">age</td>
+<td>0.1486</td>
+<td>0.014</td>
+<td>10.716</td>
+<td>0.000</td>
+<td>0.121</td>
+<td>0.176</td>
+</tr>
+<tr class="even">
+<td data-quarto-table-cell-role="th">age_sq</td>
+<td>-0.0030</td>
+<td>0.000</td>
+<td>-11.513</td>
+<td>0.000</td>
+<td>-0.003</td>
+<td>-0.002</td>
+</tr>
+<tr class="odd">
+<td data-quarto-table-cell-role="th">iscustomer</td>
+<td>0.2076</td>
+<td>0.031</td>
+<td>6.719</td>
+<td>0.000</td>
+<td>0.147</td>
+<td>0.268</td>
+</tr>
+</tbody>
+</table>
+</div>
+</div>
+</section>
+<section id="interpretation" class="level3">
+<h3 class="anchored" data-anchor-id="interpretation">Interpretation</h3>
+<p>The coefficient estimates from the Poisson regression using <code>statsmodels.GLM()</code> closely align with the MLE results we obtained using numerical optimization. This serves as a useful check and validates our earlier implementation.</p>
+<p><strong>Key interpretation points:</strong></p>
+<ul>
+<li><strong>Intercept</strong>: Represents the baseline log count of patents for a non-customer firm in the reference region (the region that was dropped in dummy encoding) with age and age² set to 0. While not directly interpretable on its own, it anchors the model.</li>
+<li><strong>Age &amp; Age Squared</strong>: The positive coefficient on <code>age</code> and the (typically) negative coefficient on <code>age_sq</code> suggest a concave relationship: the number of patents increases with age, but at a decreasing rate.</li>
+<li><strong>Customer Status (<code>iscustomer</code>)</strong>: A positive and statistically significant coefficient on this variable implies that, holding age and region constant, Blueprinty customers tend to have more patents than non-customers. This supports the marketing team’s hypothesis — but only after controlling for other variables.</li>
+<li><strong>Region Dummies</strong>: These capture location-specific differences in patent productivity, relative to the omitted reference region.</li>
+</ul>
+<p>Overall, the results suggest that firm age, region, and Blueprinty customer status are meaningful predictors of patent output.</p>
+<div id="fadee7bb" class="cell" data-message="false" data-execution_count="9">
+<div class="cell-output cell-output-display" data-execution_count="9">
+<pre><code>0.7927680710452915</code></pre>
+</div>
+</div>
+</section>
+<section id="interpretation-1" class="level3">
+<h3 class="anchored" data-anchor-id="interpretation-1">Interpretation</h3>
+<p>To better understand the effect of Blueprinty’s software on patent success, we constructed two counterfactual scenarios:</p>
+<ul>
+<li><code>X_0</code>: all firms set as <strong>non-customers</strong> (<code>iscustomer = 0</code>)</li>
+<li><code>X_1</code>: all firms set as <strong>customers</strong> (<code>iscustomer = 1</code>)</li>
+</ul>
+<p>We used our fitted Poisson regression model to predict the number of patents for each firm under both scenarios. The difference in predicted patent counts reflects the <strong>causal effect</strong> of being a Blueprinty customer, holding all else constant.</p>
+<p>We find that Blueprinty customers are predicted to receive, on average, <strong>0.79 more patents</strong> over a 5-year period compared to non-customers with similar characteristics. This supports the marketing team’s claim that the software improves patent success, even after adjusting for firm age and region.</p>
+</section>
+</section>
+<section id="airbnb-case-study" class="level2">
+<h2 class="anchored" data-anchor-id="airbnb-case-study">AirBnB Case Study</h2>
+<section id="introduction-1" class="level3">
+<h3 class="anchored" data-anchor-id="introduction-1">Introduction</h3>
+<p>AirBnB is a popular platform for booking short-term rentals. In March 2017, students Annika Awad, Evan Lebo, and Anna Linden scraped of 40,000 Airbnb listings from New York City. The data include the following variables:</p>
+<div class="callout callout-style-simple callout-note no-icon callout-titled">
+<div class="callout-header d-flex align-content-center" data-bs-toggle="collapse" data-bs-target=".callout-1-contents" aria-controls="callout-1" aria-expanded="false" aria-label="Toggle callout">
+<div class="callout-icon-container">
+<i class="callout-icon no-icon"></i>
+</div>
+<div class="callout-title-container flex-fill">
+Variable Definitions
+</div>
+<div class="callout-btn-toggle d-inline-block border-0 py-1 ps-1 pe-0 float-end"><i class="callout-toggle"></i></div>
+</div>
+<div id="callout-1" class="callout-1-contents callout-collapse collapse">
+<div class="callout-body-container callout-body">
+<pre><code>- `id` = unique ID number for each unit
+- `last_scraped` = date when information scraped
+- `host_since` = date when host first listed the unit on Airbnb
+- `days` = `last_scraped` - `host_since` = number of days the unit has been listed
+- `room_type` = Entire home/apt., Private room, or Shared room
+- `bathrooms` = number of bathrooms
+- `bedrooms` = number of bedrooms
+- `price` = price per night (dollars)
+- `number_of_reviews` = number of reviews for the unit on Airbnb
+- `review_scores_cleanliness` = a cleanliness score from reviews (1-10)
+- `review_scores_location` = a "quality of location" score from reviews (1-10)
+- `review_scores_value` = a "quality of value" score from reviews (1-10)
+- `instant_bookable` = "t" if instantly bookable, "f" if not</code></pre>
+</div>
+</div>
+</div>
+</section>
+<section id="exploratory-data-analysis" class="level3">
+<h3 class="anchored" data-anchor-id="exploratory-data-analysis">Exploratory Data Analysis</h3>
+<p>We explore the structure and key insights from the Airbnb dataset, focusing on listings in New York City.</p>
+<div id="8ee4ed10" class="cell" data-message="false" data-execution_count="10">
+<div class="cell-output cell-output-display">
+<div>
+<figure class="figure">
+<p><img src="index_files/figure-html/cell-11-output-1.png" width="661" height="468" class="figure-img"></p>
+</figure>
+</div>
+</div>
+<div class="cell-output cell-output-display">
+<div>
+<figure class="figure">
+<p><img src="index_files/figure-html/cell-11-output-2.png" width="661" height="468" class="figure-img"></p>
+</figure>
+</div>
+</div>
+<div class="cell-output cell-output-display">
+<div>
+<figure class="figure">
+<p><img src="index_files/figure-html/cell-11-output-3.png" width="661" height="468" class="figure-img"></p>
+</figure>
+</div>
+</div>
+<div class="cell-output cell-output-display">
+<div>
+<figure class="figure">
+<p><img src="index_files/figure-html/cell-11-output-4.png" width="661" height="468" class="figure-img"></p>
+</figure>
+</div>
+</div>
+</div>
+</section>
+<section id="observations" class="level3">
+<h3 class="anchored" data-anchor-id="observations">Observations</h3>
+<ul>
+<li><p><strong>Most listings are lightly reviewed</strong>: The majority of listings have fewer than 20 reviews, indicating either new hosts or infrequent bookings. A small number of highly popular listings receive well over 100 reviews.</p></li>
+<li><p><strong>Prices are highly skewed</strong>: Nightly rates are concentrated under $200, but the distribution is long-tailed, with a few luxury listings reaching $500 or more per night.</p></li>
+<li><p><strong>Room types vary in availability</strong>: Entire homes and apartments dominate the market, followed by private rooms. Shared rooms are relatively rare.</p></li>
+<li><p><strong>Cleanliness matters</strong>: Listings with higher cleanliness scores tend to attract more reviews, implying that guest satisfaction and perceived hygiene significantly influence engagement.</p></li>
+<li><p><strong>Instant booking is common</strong>: While not visualized here, a large share of listings are instantly bookable, likely increasing conversion by reducing booking friction for guests.</p></li>
+</ul>
+</section>
+<section id="differences-in-age-and-region-by-customer-status" class="level3">
+<h3 class="anchored" data-anchor-id="differences-in-age-and-region-by-customer-status">Differences in Age and Region by Customer Status</h3>
+<p>We examine whether Blueprinty customers differ systematically in age and region compared to non-customers. Since Blueprinty customers are not randomly assigned, this step helps assess potential selection bias.</p>
+<div id="2837ee53" class="cell" data-message="false" data-execution_count="11">
+<div class="cell-output cell-output-display">
+<div>
+<figure class="figure">
+<p><img src="index_files/figure-html/cell-12-output-1.png" width="661" height="468" class="figure-img"></p>
+</figure>
+</div>
+</div>
+<div class="cell-output cell-output-display" data-execution_count="11">
+<div>
+
+
+<table class="dataframe caption-top table table-sm table-striped small" data-quarto-postprocess="true" data-border="1">
+<thead>
+<tr class="header">
+<th data-quarto-table-cell-role="th"></th>
+<th data-quarto-table-cell-role="th">Non-Customer</th>
+<th data-quarto-table-cell-role="th">Customer</th>
+</tr>
+<tr class="even">
+<th data-quarto-table-cell-role="th">region</th>
+<th data-quarto-table-cell-role="th"></th>
+<th data-quarto-table-cell-role="th"></th>
+</tr>
+</thead>
+<tbody>
+<tr class="odd">
+<td data-quarto-table-cell-role="th">Midwest</td>
+<td>0.83</td>
+<td>0.17</td>
+</tr>
+<tr class="even">
+<td data-quarto-table-cell-role="th">Northeast</td>
+<td>0.45</td>
+<td>0.55</td>
+</tr>
+<tr class="odd">
+<td data-quarto-table-cell-role="th">Northwest</td>
+<td>0.84</td>
+<td>0.16</td>
+</tr>
+<tr class="even">
+<td data-quarto-table-cell-role="th">South</td>
+<td>0.82</td>
+<td>0.18</td>
+</tr>
+<tr class="odd">
+<td data-quarto-table-cell-role="th">Southwest</td>
+<td>0.82</td>
+<td>0.18</td>
+</tr>
+</tbody>
+</table>
+
+</div>
+</div>
+</div>
+</section>
+<section id="observations-1" class="level3">
+<h3 class="anchored" data-anchor-id="observations-1">Observations</h3>
+<ul>
+<li><p><strong>Firm Age</strong>: Firms that use Blueprinty tend to be older than non-customer firms. This suggests that more established companies may be more likely to adopt Blueprinty’s software, possibly due to greater resources or a higher volume of patent activity.</p></li>
+<li><p><strong>Regional Differences</strong>: Customer adoption is not evenly distributed across regions. Certain regions have a significantly higher proportion of Blueprinty users, indicating possible geographic or industry-driven differences in adoption behavior.</p></li>
+<li><p><strong>Implication</strong>: These findings highlight potential selection bias. Since customer firms systematically differ from non-customers in both age and region, it’s important to control for these variables in any causal analysis of Blueprinty’s impact on patent success.</p></li>
+</ul>
+
+
+</section>
 </section>
 
 </main> <!-- /main -->
