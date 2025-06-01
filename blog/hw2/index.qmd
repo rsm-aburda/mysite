@@ -2,7 +2,7 @@
 title: "Poisson Regression Examples"
 
 author: "Andrew Burda"
-date: today
+date: 05 - 11 - 2025
 callout-appearance: minimal # this hides the blue "i" icon on .callout-notes
 ---
 
