@@ -1,7 +1,7 @@
 ---
 title: "Multinomial Logit Model"
 author: "Andrew Burda"
-date: 05 - 28 - 2025
+date: 05-28-2025
 ---
 
 
