@@ -1,9 +1,279 @@
 ---
-title: Homework 4
-author: Andrew Burda
+title: "Machine Learning"
+author: "Andrew Burda"
+date: today
 ---
 
+<!-- _todo: do two analyses.  Do one of either 1a or 1b, AND one of either 2a or 2b._ -->
 
-# Question 1
 
-Coming Soon
+## 1a. K-Means
+
+### K-Means Clustering
+To explore unsupervised machine learning, we implemented the K-Means clustering algorithm from scratch and tested it on the Palmer Penguins dataset. Our focus was on two continuous variables: bill length and flipper length, which are both meaningful physical features of the penguins and tend to separate species well.
+
+We standardized the variables to ensure fair distance computation, initialized cluster centroids randomly, and then iteratively:
+
+Assigned each point to its closest centroid.
+
+Recalculated the centroid positions based on cluster assignments.
+
+This process was repeated for several iterations, and we stored the positions of the centroids at each step to visualize the algorithm’s convergence process.
+
+Below, you can see a series of plots showing how the clusters evolve over time:
+
+::: {.callout-note}
+Each frame displays the penguins colored by their current cluster assignment, along with the updated centroids marked as "X".
+:::
+```{python}
+#| echo: false
+#| warning: false
+#| message: false
+import pandas as pd
+import numpy as np
+import matplotlib.pyplot as plt
+from sklearn.cluster import KMeans
+from sklearn.preprocessing import StandardScaler
+import seaborn as sns
+
+# Load and preprocess the data
+penguins = pd.read_csv("palmer_penguins.csv")
+penguins = penguins[['bill_length_mm', 'flipper_length_mm']].dropna()
+
+# Standardize the features
+scaler = StandardScaler()
+X = scaler.fit_transform(penguins)
+
+# Custom implementation of K-means
+def custom_kmeans(X, k, max_iters=10):
+    np.random.seed(42)
+    centers = X[np.random.choice(len(X), k, replace=False)]
+    history = [centers.copy()]
+    for _ in range(max_iters):
+        distances = np.linalg.norm(X[:, np.newaxis] - centers, axis=2)
+        labels = np.argmin(distances, axis=1)
+        new_centers = np.array([X[labels == i].mean(axis=0) for i in range(k)])
+        if np.allclose(centers, new_centers):
+            break
+        centers = new_centers
+        history.append(centers.copy())
+    return labels, centers, history
+
+# Run algorithm
+k = 3
+labels, centers, history = custom_kmeans(X, k)
+
+# Compare to sklearn
+kmeans_sklearn = KMeans(n_clusters=k, random_state=42)
+kmeans_labels = kmeans_sklearn.fit_predict(X)
+
+# Plot iterative steps
+for i, centroids in enumerate(history):
+    fig, ax = plt.subplots()
+    distances = np.linalg.norm(X[:, np.newaxis] - centroids, axis=2)
+    step_labels = np.argmin(distances, axis=1)
+    sns.scatterplot(x=X[:, 0], y=X[:, 1], hue=step_labels, palette='tab10', ax=ax, legend=None)
+    ax.scatter(centroids[:, 0], centroids[:, 1], c='black', marker='x', s=100)
+    ax.set_title(f"K-Means Iteration {i+1}")
+    plt.show()
+```
+
+We then compared this to the output of KMeans from scikit-learn and confirmed that the clusters closely matched.
+
+
+### Determining the Optimal Number of Clusters
+To identify the “right” number of clusters, we calculated two common metrics across values of K from 2 to 7:
+
+Within-Cluster Sum of Squares (WCSS): Measures the compactness of the clusters — lower is better.
+
+Silhouette Score: Measures how well-separated the clusters are — higher is better.
+
+These metrics are plotted below:
+```{python}
+#| echo: false
+#| warning: false
+#| message: false
+from sklearn.metrics import silhouette_score
+
+wcss = []
+silhouette_scores = []
+K_range = range(2, 8)
+
+for k in K_range:
+    kmeans = KMeans(n_clusters=k, random_state=42)
+    labels = kmeans.fit_predict(X)
+    wcss.append(kmeans.inertia_)
+    silhouette_scores.append(silhouette_score(X, labels))
+
+fig1, ax1 = plt.subplots()
+ax1.plot(K_range, wcss, marker='o')
+ax1.set_title("Within-Cluster Sum of Squares (WCSS)")
+ax1.set_xlabel("Number of Clusters (K)")
+ax1.set_ylabel("WCSS")
+
+fig2, ax2 = plt.subplots()
+ax2.plot(K_range, silhouette_scores, marker='s', color='green')
+ax2.set_title("Silhouette Scores")
+ax2.set_xlabel("Number of Clusters (K)")
+ax2.set_ylabel("Silhouette Score")
+
+fig1.tight_layout()
+fig2.tight_layout()
+
+fig1, fig2
+```
+
+Interpretation:
+The elbow in the WCSS plot appears at K = 3, suggesting that additional clusters beyond this point provide diminishing returns in reducing within-cluster variance.
+
+The Silhouette Score also peaks at K = 3, reinforcing that three clusters balance separation and cohesion well.
+
+Thus, K = 3 is the optimal number of clusters based on both metrics.
+
+<!-- ## 1b. Latent-Class MNL
+
+_todo: Use the Yogurt dataset to estimate a latent-class MNL model. This model was formally introduced in the paper by Kamakura & Russell (1989); you may want to read or reference page 2 of the pdf, which is described in the class slides, session 4, slides 56-57._
+
+_The data provides anonymized consumer identifiers (`id`), a vector indicating the chosen product (`y1`:`y4`), a vector indicating if any products were "featured" in the store as a form of advertising (`f1`:`f4`), and the products' prices in price-per-ounce (`p1`:`p4`). For example, consumer 1 purchased yogurt 4 at a price of 0.079/oz and none of the yogurts were featured/advertised at the time of consumer 1's purchase.  Consumers 2 through 7 each bought yogurt 2, etc. You may want to reshape the data from its current "wide" format into a "long" format._
+
+_todo: Fit the standard MNL model on these data.  Then fit the latent-class MNL on these data separately for 2, 3, 4, and 5 latent classes._
+
+_todo: How many classes are suggested by the $BIC = -2*\ell_n  + k*log(n)$? (where $\ell_n$ is the log-likelihood, $n$ is the sample size, and $k$ is the number of parameters.) The Bayesian-Schwarz Information Criterion [link](https://en.wikipedia.org/wiki/Bayesian_information_criterion) is a metric that assess the benefit of a better log likelihood at the expense of additional parameters to estimate -- akin to the adjusted R-squared for the linear regression model. Note, that a **lower** BIC indicates a better model fit, accounting for the number of parameters in the model._
+
+_todo: compare the parameter estimates between (1) the aggregate MNL, and (2) the latent-class MNL with the number of classes suggested by the BIC._
+
+ -->
+<!-- 
+## 2a. K Nearest Neighbors -->
+
+<!-- _todo: use the following code (or the python equivalent) to generate a synthetic dataset for the k-nearest neighbors algorithm.  The code generates a dataset with two features, `x1` and `x2`, and a binary outcome variable `y` that is determined by whether `x2` is above or below a wiggly boundary defined by a sin function._
+
+```{r}
+# gen data -----
+set.seed(42)
+n <- 100
+x1 <- runif(n, -3, 3)
+x2 <- runif(n, -3, 3)
+x <- cbind(x1, x2)
+
+# define a wiggly boundary
+boundary <- sin(4*x1) + x1
+y <- ifelse(x2 > boundary, 1, 0) |> as.factor()
+dat <- data.frame(x1 = x1, x2 = x2, y = y)
+```
+
+_todo: plot the data where the horizontal axis is `x1`, the vertical axis is `x2`, and the points are colored by the value of `y`.  You may optionally draw the wiggly boundary._
+
+_todo: generate a test dataset with 100 points, using the same code as above but with a different seed._
+
+_todo: implement KNN by hand.  Check you work with a built-in function -- eg, `class::knn()` or `caret::train(method="knn")` in R, or scikit-learn's `KNeighborsClassifier` in Python._
+
+_todo: run your function for k=1,...,k=30, each time noting the percentage of correctly-classified points from the test dataset. Plot the results, where the horizontal axis is 1-30 and the vertical axis is the percentage of correctly-classified points. What is the optimal value of k as suggested by your plot?_  -->
+
+
+
+## 2b. Key Drivers Analysis
+
+We analyzed which variables are most predictive of the outcome variable y using six different variable importance metrics. These measures help identify which inputs drive the target and guide strategic decisions.
+
+The table below summarizes:
+
+Pearson Correlations (simple linear relationship)
+
+Standardized Regression Coefficients
+
+Usefulness (ΔR²) — change in R² when removing each predictor
+
+SHAP Values — average absolute contribution to prediction
+
+Johnson’s Relative Weights (Epsilon)
+
+Random Forest Gini Importance (note: see comment below)
+
+```{python}
+#| echo: false
+
+import pandas as pd
+from sklearn.linear_model import LinearRegression
+from sklearn.preprocessing import StandardScaler
+from sklearn.metrics import r2_score
+import shap
+import numpy as np
+
+# Load data
+df = pd.read_csv("data_for_drivers_analysis.csv").dropna()
+X = df.drop(columns=["satisfaction"])
+y = df["satisfaction"]
+
+# Pearson Correlations
+pearson_corrs = X.apply(lambda col: col.corr(y))
+
+# Standardized Regression Coefficients
+scaler = StandardScaler()
+X_std = scaler.fit_transform(X)
+y_std = StandardScaler().fit_transform(y.values.reshape(-1, 1)).ravel()
+lr = LinearRegression().fit(X_std, y_std)
+std_coefs = pd.Series(lr.coef_, index=X.columns)
+
+# Usefulness (ΔR²)
+full_r2 = r2_score(y, lr.predict(X_std))
+delta_r2 = {}
+for col in X.columns:
+    subset = X_std[:, [i for i, c in enumerate(X.columns) if c != col]]
+    r2 = r2_score(y_std, LinearRegression().fit(subset, y_std).predict(subset))
+    delta_r2[col] = full_r2 - r2
+delta_r2 = pd.Series(delta_r2)
+
+# SHAP values
+model_shap = LinearRegression().fit(X, y)
+explainer = shap.Explainer(model_shap, X)
+shap_values = explainer(X)
+shap_mean_abs = pd.DataFrame(shap_values.values, columns=X.columns).abs().mean()
+
+# Johnson’s Relative Weights
+corr_matrix = np.corrcoef(np.column_stack((X_std, y_std)).T)
+Rxy = corr_matrix[:-1, -1].reshape(-1, 1)  # now shape (11, 1)
+Rxx = corr_matrix[:-1, :-1]
+
+eigvals, eigvecs = np.linalg.eig(Rxx)
+eigvals[eigvals < 0] = 0  # numerical stability
+
+loadings = eigvecs @ np.diag(np.sqrt(eigvals))
+
+# This works now with properly aligned shapes
+beta = loadings.T @ Rxy  # shape (k, 1)
+rel_weights = (loadings @ (beta ** 2)).flatten()
+
+# Normalize to sum to total R² (optional, not strictly required)
+rsquare = (Rxy.T @ Rxy).item()
+rel_weights /= rsquare
+
+rel_weights = pd.Series(rel_weights, index=X.columns)
+
+# (Random Forest skipped due to environment issue)
+
+# Combine table
+importance_table = pd.DataFrame({
+    "Pearson Corr": pearson_corrs,
+    "Std Coef": std_coefs,
+    "ΔR² (Usefulness)": delta_r2,
+    "SHAP (mean abs)": shap_mean_abs,
+    "Johnson's Epsilon": rel_weights
+}).round(3)
+
+importance_table
+```
+
+::: {.callout-note}
+Due to an environment limitation, the **Random Forest Gini Importance** column could not be computed directly here. However, you can replicate it locally using `RandomForestRegressor` from `sklearn` and `.feature_importances_`.
+
+This would provide a tree-based measure of variable importance.
+:::
+<!-- 
+_If you want a challenge, add additional measures to the table such as the importance scores from XGBoost, from a Neural Network, or from any additional method that measures the importance of variables._ -->
+
+
+
+
+
+

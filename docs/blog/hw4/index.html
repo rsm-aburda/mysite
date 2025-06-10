@@ -7,8 +7,9 @@
 <meta name="viewport" content="width=device-width, initial-scale=1.0, user-scalable=yes">
 
 <meta name="author" content="Andrew Burda">
+<meta name="dcterms.date" content="2025-06-09">
 
-<title>Homework 4 – Andrew Burda</title>
+<title>Machine Learning – Andrew Burda</title>
 <style>
 code{white-space: pre-wrap;}
 span.smallcaps{font-variant: small-caps;}
@@ -117,7 +118,12 @@ ul.task-list li input[type="checkbox"] {
     <h2 id="toc-title">On this page</h2>
    
   <ul>
-  <li><a href="#question-1" id="toc-question-1" class="nav-link active" data-scroll-target="#question-1">Question 1</a></li>
+  <li><a href="#a.-k-means" id="toc-a.-k-means" class="nav-link active" data-scroll-target="#a.-k-means">1a. K-Means</a>
+  <ul class="collapse">
+  <li><a href="#k-means-clustering" id="toc-k-means-clustering" class="nav-link" data-scroll-target="#k-means-clustering">K-Means Clustering</a></li>
+  <li><a href="#determining-the-optimal-number-of-clusters" id="toc-determining-the-optimal-number-of-clusters" class="nav-link" data-scroll-target="#determining-the-optimal-number-of-clusters">Determining the Optimal Number of Clusters</a></li>
+  </ul></li>
+  <li><a href="#b.-key-drivers-analysis" id="toc-b.-key-drivers-analysis" class="nav-link" data-scroll-target="#b.-key-drivers-analysis">2b. Key Drivers Analysis</a></li>
   </ul>
 </nav>
     </div>
@@ -126,7 +132,7 @@ ul.task-list li input[type="checkbox"] {
 
 <header id="title-block-header" class="quarto-title-block default">
 <div class="quarto-title">
-<h1 class="title">Homework 4</h1>
+<h1 class="title">Machine Learning</h1>
 </div>
 
 
@@ -140,6 +146,12 @@ ul.task-list li input[type="checkbox"] {
           </div>
   </div>
     
+    <div>
+    <div class="quarto-title-meta-heading">Published</div>
+    <div class="quarto-title-meta-contents">
+      <p class="date">June 9, 2025</p>
+    </div>
+  </div>
   
     
   </div>
@@ -149,9 +161,214 @@ ul.task-list li input[type="checkbox"] {
 </header>
 
 
-<section id="question-1" class="level1">
-<h1>Question 1</h1>
-<p>Coming Soon</p>
+<!-- _todo: do two analyses.  Do one of either 1a or 1b, AND one of either 2a or 2b._ -->
+<section id="a.-k-means" class="level2">
+<h2 class="anchored" data-anchor-id="a.-k-means">1a. K-Means</h2>
+<section id="k-means-clustering" class="level3">
+<h3 class="anchored" data-anchor-id="k-means-clustering">K-Means Clustering</h3>
+<p>To explore unsupervised machine learning, we implemented the K-Means clustering algorithm from scratch and tested it on the Palmer Penguins dataset. Our focus was on two continuous variables: bill length and flipper length, which are both meaningful physical features of the penguins and tend to separate species well.</p>
+<p>We standardized the variables to ensure fair distance computation, initialized cluster centroids randomly, and then iteratively:</p>
+<p>Assigned each point to its closest centroid.</p>
+<p>Recalculated the centroid positions based on cluster assignments.</p>
+<p>This process was repeated for several iterations, and we stored the positions of the centroids at each step to visualize the algorithm’s convergence process.</p>
+<p>Below, you can see a series of plots showing how the clusters evolve over time:</p>
+<div class="callout callout-style-default callout-note callout-titled">
+<div class="callout-header d-flex align-content-center">
+<div class="callout-icon-container">
+<i class="callout-icon"></i>
+</div>
+<div class="callout-title-container flex-fill">
+Note
+</div>
+</div>
+<div class="callout-body-container callout-body">
+<p>Each frame displays the penguins colored by their current cluster assignment, along with the updated centroids marked as “X”.</p>
+</div>
+</div>
+<div class="cell">
+<div class="cell-output-display">
+<div>
+<figure class="figure">
+<p><img src="index_files/figure-html/unnamed-chunk-1-1.png" class="img-fluid figure-img" width="672"></p>
+</figure>
+</div>
+</div>
+<div class="cell-output-display">
+<div>
+<figure class="figure">
+<p><img src="index_files/figure-html/unnamed-chunk-1-2.png" class="img-fluid figure-img" width="672"></p>
+</figure>
+</div>
+</div>
+<div class="cell-output-display">
+<div>
+<figure class="figure">
+<p><img src="index_files/figure-html/unnamed-chunk-1-3.png" class="img-fluid figure-img" width="672"></p>
+</figure>
+</div>
+</div>
+<div class="cell-output-display">
+<div>
+<figure class="figure">
+<p><img src="index_files/figure-html/unnamed-chunk-1-4.png" class="img-fluid figure-img" width="672"></p>
+</figure>
+</div>
+</div>
+<div class="cell-output-display">
+<div>
+<figure class="figure">
+<p><img src="index_files/figure-html/unnamed-chunk-1-5.png" class="img-fluid figure-img" width="672"></p>
+</figure>
+</div>
+</div>
+<div class="cell-output-display">
+<div>
+<figure class="figure">
+<p><img src="index_files/figure-html/unnamed-chunk-1-6.png" class="img-fluid figure-img" width="672"></p>
+</figure>
+</div>
+</div>
+<div class="cell-output-display">
+<div>
+<figure class="figure">
+<p><img src="index_files/figure-html/unnamed-chunk-1-7.png" class="img-fluid figure-img" width="672"></p>
+</figure>
+</div>
+</div>
+<div class="cell-output-display">
+<div>
+<figure class="figure">
+<p><img src="index_files/figure-html/unnamed-chunk-1-8.png" class="img-fluid figure-img" width="672"></p>
+</figure>
+</div>
+</div>
+<div class="cell-output-display">
+<div>
+<figure class="figure">
+<p><img src="index_files/figure-html/unnamed-chunk-1-9.png" class="img-fluid figure-img" width="672"></p>
+</figure>
+</div>
+</div>
+<div class="cell-output-display">
+<div>
+<figure class="figure">
+<p><img src="index_files/figure-html/unnamed-chunk-1-10.png" class="img-fluid figure-img" width="672"></p>
+</figure>
+</div>
+</div>
+<div class="cell-output-display">
+<div>
+<figure class="figure">
+<p><img src="index_files/figure-html/unnamed-chunk-1-11.png" class="img-fluid figure-img" width="672"></p>
+</figure>
+</div>
+</div>
+</div>
+<p>We then compared this to the output of KMeans from scikit-learn and confirmed that the clusters closely matched.</p>
+</section>
+<section id="determining-the-optimal-number-of-clusters" class="level3">
+<h3 class="anchored" data-anchor-id="determining-the-optimal-number-of-clusters">Determining the Optimal Number of Clusters</h3>
+<p>To identify the “right” number of clusters, we calculated two common metrics across values of K from 2 to 7:</p>
+<p>Within-Cluster Sum of Squares (WCSS): Measures the compactness of the clusters — lower is better.</p>
+<p>Silhouette Score: Measures how well-separated the clusters are — higher is better.</p>
+<p>These metrics are plotted below: ::: {.cell} ::: {.cell-output-display} <img src="index_files/figure-html/unnamed-chunk-2-23.png" class="img-fluid" width="672"> ::: :::</p>
+<p>Interpretation: The elbow in the WCSS plot appears at K = 3, suggesting that additional clusters beyond this point provide diminishing returns in reducing within-cluster variance.</p>
+<p>The Silhouette Score also peaks at K = 3, reinforcing that three clusters balance separation and cohesion well.</p>
+<p>Thus, K = 3 is the optimal number of clusters based on both metrics.</p>
+<!-- ## 1b. Latent-Class MNL
+
+_todo: Use the Yogurt dataset to estimate a latent-class MNL model. This model was formally introduced in the paper by Kamakura & Russell (1989); you may want to read or reference page 2 of the pdf, which is described in the class slides, session 4, slides 56-57._
+
+_The data provides anonymized consumer identifiers (`id`), a vector indicating the chosen product (`y1`:`y4`), a vector indicating if any products were "featured" in the store as a form of advertising (`f1`:`f4`), and the products' prices in price-per-ounce (`p1`:`p4`). For example, consumer 1 purchased yogurt 4 at a price of 0.079/oz and none of the yogurts were featured/advertised at the time of consumer 1's purchase.  Consumers 2 through 7 each bought yogurt 2, etc. You may want to reshape the data from its current "wide" format into a "long" format._
+
+_todo: Fit the standard MNL model on these data.  Then fit the latent-class MNL on these data separately for 2, 3, 4, and 5 latent classes._
+
+_todo: How many classes are suggested by the $BIC = -2*\ell_n  + k*log(n)$? (where $\ell_n$ is the log-likelihood, $n$ is the sample size, and $k$ is the number of parameters.) The Bayesian-Schwarz Information Criterion [link](https://en.wikipedia.org/wiki/Bayesian_information_criterion) is a metric that assess the benefit of a better log likelihood at the expense of additional parameters to estimate -- akin to the adjusted R-squared for the linear regression model. Note, that a **lower** BIC indicates a better model fit, accounting for the number of parameters in the model._
+
+_todo: compare the parameter estimates between (1) the aggregate MNL, and (2) the latent-class MNL with the number of classes suggested by the BIC._
+
+ -->
+<!-- 
+## 2a. K Nearest Neighbors -->
+<!-- _todo: use the following code (or the python equivalent) to generate a synthetic dataset for the k-nearest neighbors algorithm.  The code generates a dataset with two features, `x1` and `x2`, and a binary outcome variable `y` that is determined by whether `x2` is above or below a wiggly boundary defined by a sin function._
+
+::: {.cell}
+
+```{.r .cell-code}
+# gen data -----
+set.seed(42)
+n <- 100
+x1 <- runif(n, -3, 3)
+x2 <- runif(n, -3, 3)
+x <- cbind(x1, x2)
+
+# define a wiggly boundary
+boundary <- sin(4*x1) + x1
+y <- ifelse(x2 > boundary, 1, 0) |> as.factor()
+dat <- data.frame(x1 = x1, x2 = x2, y = y)
+```
+:::
+
+_todo: plot the data where the horizontal axis is `x1`, the vertical axis is `x2`, and the points are colored by the value of `y`.  You may optionally draw the wiggly boundary._
+
+_todo: generate a test dataset with 100 points, using the same code as above but with a different seed._
+
+_todo: implement KNN by hand.  Check you work with a built-in function -- eg, `class::knn()` or `caret::train(method="knn")` in R, or scikit-learn's `KNeighborsClassifier` in Python._
+
+_todo: run your function for k=1,...,k=30, each time noting the percentage of correctly-classified points from the test dataset. Plot the results, where the horizontal axis is 1-30 and the vertical axis is the percentage of correctly-classified points. What is the optimal value of k as suggested by your plot?_  -->
+</section>
+</section>
+<section id="b.-key-drivers-analysis" class="level2">
+<h2 class="anchored" data-anchor-id="b.-key-drivers-analysis">2b. Key Drivers Analysis</h2>
+<p>We analyzed which variables are most predictive of the outcome variable y using six different variable importance metrics. These measures help identify which inputs drive the target and guide strategic decisions.</p>
+<p>The table below summarizes:</p>
+<p>Pearson Correlations (simple linear relationship)</p>
+<p>Standardized Regression Coefficients</p>
+<p>Usefulness (ΔR²) — change in R² when removing each predictor</p>
+<p>SHAP Values — average absolute contribution to prediction</p>
+<p>Johnson’s Relative Weights (Epsilon)</p>
+<p>Random Forest Gini Importance (note: see comment below)</p>
+<div class="cell">
+<div class="cell-output cell-output-stdout">
+<pre><code>           Pearson Corr  Std Coef  ...  SHAP (mean abs)  Johnson's Epsilon
+brand            -0.049     0.010  ...            0.010             -1.091
+id               -0.009    -0.013  ...            0.013              0.057
+trust             0.256     0.115  ...            0.136              2.918
+build             0.192     0.019  ...            0.022              2.791
+differs           0.185     0.028  ...            0.029              2.570
+easy              0.213     0.023  ...            0.027              3.033
+appealing         0.208     0.035  ...            0.040              2.960
+rewarding         0.195     0.006  ...            0.007              2.972
+popular           0.171     0.017  ...            0.020              2.530
+service           0.251     0.088  ...            0.101              3.006
+impact            0.255     0.129  ...            0.132              2.742
+
+[11 rows x 5 columns]</code></pre>
+</div>
+<div class="cell-output-display">
+<div>
+<figure class="figure">
+<p><img src="index_files/figure-html/unnamed-chunk-4-1.png" class="img-fluid figure-img" width="672"></p>
+</figure>
+</div>
+</div>
+</div>
+<div class="callout callout-style-default callout-note callout-titled">
+<div class="callout-header d-flex align-content-center">
+<div class="callout-icon-container">
+<i class="callout-icon"></i>
+</div>
+<div class="callout-title-container flex-fill">
+Note
+</div>
+</div>
+<div class="callout-body-container callout-body">
+<p>Due to an environment limitation, the <strong>Random Forest Gini Importance</strong> column could not be computed directly here. However, you can replicate it locally using <code>RandomForestRegressor</code> from <code>sklearn</code> and <code>.feature_importances_</code>.</p>
+<p>This would provide a tree-based measure of variable importance.</p>
+</div>
+</div>
+<!-- 
+_If you want a challenge, add additional measures to the table such as the importance scores from XGBoost, from a Neural Network, or from any additional method that measures the importance of variables._ -->
 
 
 </section>
