@@ -16,9 +16,11 @@ about:
       href: https://github.com/rsm-aburda
 ---
 
-Currently I'm a Data Analyst at GIA 💎 where I work on product analytics, experimentation, and roadmap development for internal and external platforms. 
+Currently I'm a Data Analyst at GIA 💎 in a product-focused role, partnering with leadership to turn data into decisions, experiments, and roadmap direction.
 
-Currently, I’m pursuing my Master’s in Business Analytics at UC San Diego, where I’m deepening my skills in predictive modeling, statistical analysis, and decision science.
+Outside of work, I build and operate Upcycled Supply Co, a sustainable outdoor gear brand where I’ve taken products from concept to market. That includes product development, manufacturer coordination, go-to-market strategy, and running direct-to-consumer operations end to end.
+
+I recently completed my Master’s in Business Analytics, strengthening my foundation in experimentation, decision science, and consumer behavior.
 
 ---
 
